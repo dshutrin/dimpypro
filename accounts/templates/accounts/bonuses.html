@@ -1,0 +1,42 @@
+{% extends "accounts/base_admin_panel.html" %}
+{% load static %}
+
+{% block admin_content %}
+<div class="container-fluid text-center">
+	<h3>Страница работы с бонусами</h3>
+
+	<div class="row mt-3">
+		<div class="col-3"></div>
+		<div class="col-6">
+			<form method="POST">
+				{% for f in form %}
+					<div class="col m-3 form-floating" id="div_{{f.id_for_label}}">
+						{{f}}
+						<label id="ID_{{f.id_for_label}}" for="{{f.id_for_label}}">{{f.label}}</label>
+						<div class="form-error">{{f.errors}}</div>
+					</div>
+				{% endfor %}
+				{% csrf_token %}
+			</form>
+		</div>
+		<div class="col-3"></div>
+	</div>
+
+	<div id="users_block" class="row">
+		{% for user in users %}
+			<div class="col-3">
+				<div class="card">
+					<div class="card-body fs-4">{{user.username}}</div>
+					<div class="card-footer text-end">
+						<a class="btn btn-primary" href="/account/admin/bonuses/{{user.id}}">Выбрать</a>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+
+	<script src='{% static "js/users_search.js" %}'></script>
+	<script src='{% static "js/admin_menu.js" %}'></script>
+	<script>set_bonuses_admin_menu()</script>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "accounts/base_admin_panel.html" %}
+{% load static %}
+
+{% block admin_content %}
+	<div class="container-fluid text-center">
+		<h3>Страница работы с бонусами</h3>
+		<div class="text-center mt-3">
+			<h4>Выбранный пользователь: <span class="text-primary">{{user.username}}</span></h4>
+			<input id="user_id" type="text" hidden value="{{user.id}}">
+		</div>
+	</div>
+	<div class="container-fluid text-center mt-5 row">
+		<div class="col-4"></div>
+		<div class="col-4">
+			<form id="bonus_form" class="my-4 mx-auto mt-5" method="post">
+				{% for f in form %}
+					<div class="text-center form-floating mb-3">
+						{{f}}
+						<label class="form-label" for="{{f.id_for_label}}">{{f.label}}</label>
+						<div class="form-error">{{f.errors}}</div>
+					</div>
+					{% endfor %}
+				{% csrf_token %}
+				<button type="button" id="compleat_button" class="btn btn-success">Зачислить бонусы</button>
+			</form>
+		</div>
+		<div class="col-4"></div>
+	</div>
+
+	<script src='{% static "js/admin_menu.js" %}'></script>
+	<script>set_bonuses_admin_menu()</script>
+
+
+	<div class="toast-container position-fixed bottom-0 end-0 p-3">
+		<div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+			<div id="header_div" class="toast-header text-bg-success">
+				<strong id="toast_header" class="me-auto">Успешное пополнение!</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Закрыть"></button>
+			</div>
+			<div id="payment_success_text" class="toast-body"></div>
+		</div>
+	</div>
+
+	<script src='{% static "js/bonus_page.js" %}'></script>
+
+{% endblock %}

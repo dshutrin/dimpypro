@@ -1,0 +1,131 @@
+{% extends 'presentation/base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+	<div class="container-fluid image text-center pt-5">
+		<div class="container-fluid">
+			{% if not request.user.is_authenticated %}
+				<div class="text-end m-0 p-0 pb-5">
+					<a href="/login" class="btn btn-outline-light login_button">Вход</a>
+				</div>
+			{% else %}
+				<div class="text-end pb-5">
+					<a href="/account" class="btn btn-outline-light login_button">{{ request.user.username }}</a>
+				</div>
+			{% endif %}
+			<div class="container-fluid mt-5">
+				<h1 id="welcome" class="pt-5">Welcome to dimpypro</h1>
+				<div class="float-center">
+					<img src='{% static "imgs/logo.png" %}' alt="" class="mt-3" style="width: 5%;">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid p-5 m-0 text-dark fs-5 content">
+
+		<div class="container text-center my-5 py-5">
+			<h2 class="p-0 m-0">О нас</h2>
+			<span>Наша команда специализируется на разработке чат ботов</span>
+		</div>
+
+		<hr>
+
+		<div class="container mt-5 pt-5">
+			<h2 class="text-center mb-5 pb-5">Что мы делаем</h2>
+
+			<div class="row py-4">
+				<div class="col text-center">
+					<img id="vk_tg_logo" src='{% static "imgs/first_presentation.png" %}' alt="" class="img-fluid">
+				</div>
+				<div class="col">
+					<h2>Telegram / VK боты для ваших нужд</h2>
+					<span class="align-middle">
+						</br>
+						- Приём заказов
+						</br>
+						- Отзывы
+						</br>
+						- Сбор статистики
+						</br>
+						- Боты-модераторы
+						</br>
+						- Игровые боты
+						</br>
+						- Self боты
+					</span>
+				</div>
+			</div>
+
+			<div class="row py-4 text-end">
+				<div class="col">
+					<h2>Сделаем оформление для вашего сообщества или группы</h2>
+					<span class="align-middle">
+						</br>
+						Нарисуем аватар -
+						</br>
+						Нарисуем обложку -
+						</br>
+						Поможем придумать описание -
+					</span>
+				</div>
+				<div class="col align-self-center">
+					<img src='{% static "imgs/presentation_second.jpg" %}' alt="" class="img-fluid">
+				</div>
+			</div>
+
+			<div class="row mt-5 pt-5">
+				<div class="col text-center h-25">
+					<img src='{% static "imgs/server.png" %}' alt="" class="img-fluid h-50">
+				</div>
+				<div class="col h-25">
+					<h2>Поможем выбрать и настроить VDS/VPS сервер</h2>
+					<span class="align-middle">
+						</br>
+						- Настройка базы данных
+						</br>
+						- Установка и настройка бота
+					</span>
+				</div>
+			</div>
+
+			<div class="container text-center my-5">
+				<a href="#" class="btn btn-outline-success link_button">Связаться с нами</a>
+			</div>
+		</div>
+
+		<hr>
+
+		<div class="container mt-4 pt-4">
+			<h2 class="text-end mb-4 pb-4 text-center">
+				Что еще
+			</h2>
+
+			<div class="row mb-4 pb-4">
+				<div class="col text-center">
+					<h2>Утилиты</h2>
+				</div>
+				<div class="col">
+					<span class="align-middle">
+						Наша команда разрабатывает <a href="#">готовые функции и классы</a> для других разработчиков.
+						Вы можете использовать наш код при решении своих задач. В том числе и в коммерческих целях.
+					</span>
+				</div>
+			</div>
+
+			<div class="row mb-4 pb-4">
+				<div class="col text-center">
+					<h2>Видеоуроки</h2>
+				</div>
+				<div class="col">
+					<span class="align-middle">
+						Мы подготавливаем для вас подробные <a href="https://www.youtube.com/channel/UCP5C_Wg2rL_uAJw8qrVxtLQ">видео-инструкции</a> по разработке чат-ботов.
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

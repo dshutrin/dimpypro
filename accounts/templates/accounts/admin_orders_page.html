@@ -1,0 +1,43 @@
+{% extends "accounts/base_admin_panel.html" %}
+{% load static %}
+
+{% block admin_content %}
+
+	<div class="container text-center mb-5">
+		<h2>Текущие заказы</h2>
+	</div>
+
+	<div class="container-fluid m-0 p-0">
+		<div class="row m-0 p-0">
+			{% for status in statuses %}
+				<h2>{{status}}</h2>
+				<div class="row mb-4">
+
+					{% for order in orders %}
+						{% if order.status.text == status %}
+							<div class="col-6">
+								<div class="card m-3">
+									<div class="card-header">
+										{{order.title}}
+									</div>
+									<div class="card-body text-truncate">
+										{{order.description}}
+									</div>
+									<div class="card-footer text-end">
+										<a class="btn btn-primary" style="width: 30%;" href="/account/admin/order/{{order.id}}">Перейти</a>
+									</div>
+								</div>
+							</div>
+						{% endif %}
+					{% endfor %}
+
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+
+	<script src='{% static "js/admin_menu.js" %}'></script>
+	<script>
+		set_orders_admin_menu()
+	</script>
+{% endblock %}

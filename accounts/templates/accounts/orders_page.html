@@ -1,0 +1,31 @@
+{% extends "accounts/base.html" %}
+{% load static %}
+
+{% block content %}
+	<div class="container text-center my-4">
+		<h1>Ваши заказы</h1>
+	</div>
+	<div class="container-fluid">
+		{% for status in statuses %}
+		<hr>
+		<div class="row">
+			<div class="col-4"><h1>{{status}}</h1></div>
+			<div class="col-8">
+				<div class="row">
+					{% for order in orders %}
+						{% if order.status.text == status %}
+							<div class="card col-4 m-0 p-0 mb-3 ms-3">
+								<div class="card-header">{{ order.title }}</div>
+								<div class="card-body text-truncate" style="height: 75px;">{{ order.description }}</div>
+								<div class="card-footer text-end">
+									<a class="btn btn-primary" href="/account/orders/{{order.id}}">Подробнее</a>
+								</div>
+							</div>
+						{% endif %}
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+{% endblock %}

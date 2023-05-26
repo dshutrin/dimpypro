@@ -1,0 +1,99 @@
+{% extends "accounts/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid mt-5">
+	<div class="row m-0 p-0 text-center pt-5">
+		<div>
+			<img class="shadow-lg" src="/media/{{ request.user.avatar }}" alt="..." style="min-height: 200px; min-width: 200px; max-width: 200px; border-radius: 50%; border: 2px solid black;">
+		</div>
+		<h1>Привет, {{ request.user.first_name }}!</h1>
+	</div>
+</div>
+
+<div class="container-fluid row text-center m-0 p-0 mb-4">
+	<div class="col px-4">
+		<h4>Баланс: {{ request.user.balance }}</h4>
+	</div>
+</div>
+
+<div class="row m-0 p-0">
+	<div class="col-5">
+		{% if sales_count > 0 %}
+			<div class="container">
+				<div class="row my-3">
+					<h2>Мои скидки</h2>
+					{% for sale in sales %}
+						<div class="col-6 mb-3">
+							<div class="card shadow border-success m-0 p-0 h-100">
+								<div class="card-body border-success">
+									<h5 class="card-title">Скидка {{ sale.percent }}%</h5>
+									<p class="card-text">{{ sale.description }}</p>
+								</div>
+								<div class="card-footer border-success">
+									Действует до: {{ sale.end_of }}
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+		{% endif %}
+	</div>
+	<div class="col-7">
+		<div class="container">
+			<div class="row my-3">
+				<h2>Мои заказы</h2>
+
+				<div class="col-12 mb-3">
+					<a href="#" class="btn shadow btn-primary w-100">Оформить новый заказ</a>
+				</div>
+				{% if orders_count > 0 %}
+					{% for order in orders %}
+						<div class="col-6 mb-3">
+							<div class="card shadow border-success m-0 p-0 h-100">
+								<div class="card-body border-success">
+									<h5 class="card-title">{{ order.title }}</h5></br>
+									Подан: {{ order.created_at }}</br>
+									Статус: {{ order.status.text }}
+								</div>
+								<div class="card-footer border-success text-end">
+									<a class="btn btn-outline-primary" href="/account/orders/{{ order.id }}">Подробности</a>
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal fade" id="avatar_edit_modal" tabindex="-1" aria-labelledby="avatar_edit_modalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="avatar_edit_modalLabel">Смена аватара</h5>
+			</div>
+			<form enctype="multipart/form-data" method="post">
+				<div class="modal-body">
+					{% for f in avatar_form %}
+						<p><label class="form-label" for="{{f.id_for_label}}">{{f.label}}</label>{{f}}</p>
+						<div class="form-error">{{f.errors}}</div>
+			        {% endfor %}
+					{% csrf_token %}
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+					<button id="upload_avatar_button" type="submit" class="btn btn-primary">Применить</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script src='{% static "js/profile.js" %}'></script>
+
+{% endblock %}

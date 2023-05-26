@@ -1,0 +1,42 @@
+html * {
+    font-face: "Acrom";
+    padding: 0px;
+    margin: 0px;
+}
+.image {
+    min-height: 100vh;
+}
+.form-control:focus, .form-control:active {
+    background: transparent;
+}
+.content {
+    background-color: white;
+}
+#welcome {
+    color: white;
+    font-size: 80px;
+    position: relative;
+    justify-content: center;
+}
+::-webkit-scrollbar {
+    width: 5px;
+}
+::-webkit-scrollbar-track {
+    background-color: black;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #404040;
+    border-radius: 10px;
+}
+.img-fluid {
+    border-radius: 10px;
+}
+.login_button {
+    width: 10%;
+}
+#vk_tg_logo {
+    max-height: 80%;
+}
+.link_button {
+    width: 15%;
+}

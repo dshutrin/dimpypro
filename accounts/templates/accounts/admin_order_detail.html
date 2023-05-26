@@ -1,0 +1,108 @@
+{% extends "accounts/base_admin_panel.html" %}
+{% load static %}
+
+{% block admin_content %}
+<div class="container text-center my-5">
+<h4>Заказ №{{order.id}}</h4>
+</div>
+
+<div class="container">
+	<div class="position-relative m-4">
+		<div class="container">
+			<div class="progress" role="progressbar" aria-label="Progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 5px;">
+			<div class="progress-bar" style="width: 100%"></div>
+		</div>
+		<button type="button" class="position-absolute top-0 translate-middle btn btn-sm btn-primary rounded-pill" style="width: 10rem; height:2rem;">
+			{{order_status}}
+		</button>
+	</div>
+		</div>
+</div>
+
+<div class="container-fluid text-start px-4 mt-5">
+	<h3>Заказчик: <span class="badge rounded-pill text-bg-success pe-4">
+		<img src='/media/{{ order.user.avatar }}' class="rounded-circle mr-1 me-2" alt="Chris Wood" width="40" height="40">
+		{{ order.user.username }}
+	</span></h3>
+	<input id="order_id_input" type="number" value="{{order.id}}" hidden>
+</div>
+
+<div class="container-fluid row m-0 p-0 mt-3 mb-5">
+	<div class="col-6 mt-5 px-4" style="height: 100%;">
+		<div class="card w-100">
+			<h5 class="card-header">Сведения о заказе</h5>
+			<div class="card-body text-start">
+				<h5 class="card-title">{{order.title}}</h5>
+				<p class="card-text"><strong>Описание:</strong><br>{{order.description}}</p>
+			</div>
+			<div class="card-footer">
+				Заявка подана: {{order.created_at}}
+			</div>
+		</div>
+	</div>
+	<div class="col-6 mt-5 px-4">
+
+		<div class="card text-center">
+			<div class="row p-0 m-0">
+				<div class="card-header">
+					<h5 class="text-center m-0 p-0">Связь с клиентом</h5>
+				</div>
+			</div>
+			<div class="row p-0 m-0 overflow-auto" style="max-height: 400px;">
+				<div class="card-body h-100">
+					<div id="messages_box" class="container m-0 p-0 text-start overflow-auto">
+
+						{% if messages_count == 0 %}
+							<h5 class="text-center">Чат пуст</h5>
+						{% else %}
+							{% for message in messages %}
+								<div class="mb-4">
+									<div>
+										<img src='/media/{{ message.user.avatar }}' class="rounded-circle mr-1 me-2" alt="Chris Wood" width="40" height="40">
+										<span>{{message.user.username}}</span>
+									</div>
+									<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3 mt-2">
+										{{message.text}}
+									</div>
+								</div>
+							{% endfor %}
+						{% endif %}
+					</div>
+				</div>
+			</div>
+			<div class="row p-0 m-0">
+				<div class="card-footer">
+					<div class="input-group">
+						<input type="text" id="manager_input" class="form-control" placeholder="Ответить пользователю" aria-label="Input group example" aria-describedby="basic-addon1">
+						<button type="button" onclick="send_manager_message()" class="input-group-text btn text-bg-success" id="send_message_button">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+								<path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"></path>
+							</svg>
+						</button>
+					</div>
+					{% csrf_token %}
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+	<div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+		<div id="header_div" class="toast-header text-bg-danger">
+			<strong id="toast_header" class="me-auto">Ошибка отправки сообщения!</strong>
+			<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Закрыть"></button>
+		</div>
+		<div id="payment_success_text" class="toast-body"></div>
+	</div>
+</div>
+
+
+<script src='{% static "js/admin_menu.js" %}'></script>
+<script src='{% static "js/manager_order_page.js" %}'></script>
+<script>
+	set_orders_admin_menu()
+</script>
+{% endblock %}
