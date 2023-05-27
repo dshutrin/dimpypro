@@ -255,36 +255,41 @@ def order_messages(request, order_id):
 @login_required
 def create_order(request):
 	form = OrderForm()
+	payment_status = 'True'
 
 	if request.POST:
 		form = OrderForm(request.POST)
 
-		if 'tz_file' in request.FILES:
-			order = Order.objects.create(
-				user=request.user,
-				title=request.POST['title'] or 'False',
-				description=request.POST['description'] or '',
-				status=OrderStatus.objects.get(id=1),
-				need_server_setup={'on': True, 'off': False}[request.POST['need_server_setup']] if ('need_server_setup' in request.POST) else False,
-				need_bot_setup={'on': True, 'off': False}[request.POST['need_bot_setup']] if ('need_bot_setup' in request.POST) else False,
-				need_payment_system={'on': True, 'off': False}[request.POST['need_payment_system']] if ('need_payment_system' in request.POST) else False,
-				email=request.POST['email'],
-				tz_file=request.FILES['tz_file']
-			)
-		else:
-			order = Order.objects.create(
-				user=request.user,
-				title=request.POST['title'] or 'False',
-				description=request.POST['description'] or '',
-				status=OrderStatus.objects.get(id=1),
-				need_server_setup={'on': True, 'off': False}[request.POST['need_server_setup']] if ('need_server_setup' in request.POST) else False,
-				need_bot_setup={'on': True, 'off': False}[request.POST['need_bot_setup']] if ('need_bot_setup' in request.POST) else False,
-				need_payment_system={'on': True, 'off': False}[request.POST['need_payment_system']] if ('need_payment_system' in request.POST) else False,
-				email=request.POST['email']
-			)
+		post = [
+			request.POST.get(x, False) for x in ['title', 'description', 'email']
+		]
+		if all(post):
+			if 'tz_file' in request.FILES:
+				order = Order.objects.create(
+					user=request.user,
+					title=request.POST['title'] or 'False',
+					description=request.POST['description'] or '',
+					status=OrderStatus.objects.get(id=1),
+					need_server_setup={'on': True, 'off': False}[request.POST['need_server_setup']] if ('need_server_setup' in request.POST) else False,
+					need_bot_setup={'on': True, 'off': False}[request.POST['need_bot_setup']] if ('need_bot_setup' in request.POST) else False,
+					need_payment_system={'on': True, 'off': False}[request.POST['need_payment_system']] if ('need_payment_system' in request.POST) else False,
+					email=request.POST['email'],
+					tz_file=request.FILES['tz_file']
+				)
+			else:
+				order = Order.objects.create(
+					user=request.user,
+					title=request.POST['title'] or 'False',
+					description=request.POST['description'] or '',
+					status=OrderStatus.objects.get(id=1),
+					need_server_setup={'on': True, 'off': False}[request.POST['need_server_setup']] if ('need_server_setup' in request.POST) else False,
+					need_bot_setup={'on': True, 'off': False}[request.POST['need_bot_setup']] if ('need_bot_setup' in request.POST) else False,
+					need_payment_system={'on': True, 'off': False}[request.POST['need_payment_system']] if ('need_payment_system' in request.POST) else False,
+					email=request.POST['email']
+				)
 
-		order.set_price()
-		return HttpResponseRedirect('/account/orders')
+			order.set_price()
+			return HttpResponseRedirect('/account/orders')
 
 	return render(request, 'accounts/create_order_page.html', {'form': form})
 
