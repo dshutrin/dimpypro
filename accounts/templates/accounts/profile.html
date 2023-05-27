@@ -8,7 +8,7 @@
 		<div>
 			<img class="shadow-lg" src="/media/{{ request.user.avatar }}" alt="..." style="min-height: 200px; min-width: 200px; max-width: 200px; border-radius: 50%; border: 2px solid black;">
 		</div>
-		<h1>Привет, {{ request.user.first_name }}!</h1>
+		<h1>Привет, {{ request.user.username }}!</h1>
 	</div>
 </div>
 
@@ -47,7 +47,7 @@
 				<h2>Мои заказы</h2>
 
 				<div class="col-12 mb-3">
-					<a href="#" class="btn shadow btn-primary w-100">Оформить новый заказ</a>
+					<a href="/account/order/create" class="btn shadow btn-primary w-100">Оформить новый заказ</a>
 				</div>
 				{% if orders_count > 0 %}
 					{% for order in orders %}

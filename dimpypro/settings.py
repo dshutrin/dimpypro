@@ -5,7 +5,7 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-nf8@&u0gu4e99ya6kgulg0-ur8-^=zt!#805(93l%2l+9(+06e'
 
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
@@ -82,7 +82,6 @@ STATIC_URL = 'static/'
 
 if not DEBUG:
 	STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-	print(STATIC_ROOT)
 else:
 	STATICFILES_DIRS = (
 		os.path.join(BASE_DIR, 'static/'),

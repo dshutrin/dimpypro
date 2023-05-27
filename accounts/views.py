@@ -233,5 +233,32 @@ def order_messages(request, order_id):
 			'avatar': message.user.avatar.url
 		})
 	else:
-		print('BAD2')
 		return JsonResponse({'ok': False})
+
+
+@login_required
+def create_order(request):
+	form = OrderForm()
+
+	if request.POST:
+		form = OrderForm(request.POST)
+
+		if form.is_valid():
+			print('valid!')
+		else:
+			pass
+
+	return render(request, 'accounts/create_order_page.html', {'form': form})
+
+
+@login_required
+def get_order_price(request):
+	if request.method == 'POST':
+		order = Order(
+			need_server_setup={'true': True, 'false': False}[request.POST['need_server_setup']],
+			need_bot_setup={'true': True, 'false': False}[request.POST['need_bot_setup']],
+			need_payment_system={'true': True, 'false': False}[request.POST['need_payment_system']]
+		)
+		return JsonResponse(order.get_price())
+	else:
+		return JsonResponse({'error': True})

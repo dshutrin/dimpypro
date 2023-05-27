@@ -4,6 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django.utils.timezone import now
+from django.db.models import Q
 
 from .utils import *
 from .managers import *
@@ -55,11 +56,24 @@ class OrderStatus(Model):
 
 class Order(Model):
 	user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=False, default=None)
-	title = models.CharField(verbose_name='Заголовок', max_length=255, blank=True)
-	description = models.TextField(verbose_name='Описание', blank=True)
+	title = models.CharField(verbose_name='Тема заказа', max_length=255, blank=True)
+	description = models.TextField(verbose_name='Описание заказа', blank=True)
 	price = models.FloatField(verbose_name='Стоимость', blank=True, null=True)
 	status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE, null=False, default=0)
 	created_at = models.DateField(verbose_name='Дата подачи', auto_now=True)
+	need_server_setup = models.BooleanField(verbose_name='Требуется установка/настройка сервера', default=False)
+	need_bot_setup = models.BooleanField(verbose_name='Требуется установка бота на сервер', default=False)
+	need_payment_system = models.BooleanField(verbose_name='Требуется платёжная система', default=False)
+	email = models.EmailField(verbose_name='Email для чека', default=None, null=True)
+	tz_file = models.FileField(verbose_name='Файл с техническим заданием', upload_to=get_order_tz_path, default=None, null=True, blank=True)
+
+	def get_price(self):
+		return {
+			'Разработка бота': 3000,
+			'Настройка сервера': int(self.need_server_setup) * 500,
+			'Установка бота': int(self.need_bot_setup) * 500,
+			'Подключение платёжной системы': int(self.need_payment_system) * 1500
+		}
 
 	def __str__(self):
 		return f'Заказ №{self.id} {self.user.username} ({self.status.text})'

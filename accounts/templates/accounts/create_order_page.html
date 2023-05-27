@@ -1,0 +1,91 @@
+{% extends "accounts/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-5 pt-5">
+
+	<div class="row g-5">
+		<div class="col-md-5 col-lg-4 order-md-last">
+			<h4 class="d-flex justify-content-between align-items-center mb-3">
+				Компоненты
+			</h4>
+			<ul id="components_box" class="list-group mb-3">
+			</ul>
+		</div>
+
+
+		<div class="col-md-7 col-lg-8">
+			<h4 class="mb-3">Оформление заказа</h4>
+			<form method="POST" class="needs-validation" novalidate="">
+				<div class="row g-3">
+
+					<div class="col-12">
+						<div class="form-floating">
+							{{form.email}}
+							<label for="email" class="form-label">{{form.email.label}}</label>
+							<div class="invalid-feedback">
+								Please enter a valid email address for shipping updates.
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<div class="form-floating">
+							{{form.title}}
+							<label for="title" class="form-label">{{form.title.label}}</label>
+							<div class="invalid-feedback">
+								Please enter a valid email address for shipping updates.
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<div class="form-floating">
+							{{form.description}}
+							<label for="floatingTextarea">{{form.description.label}}</label>
+							<div class="invalid-feedback">
+								Please enter a valid email address for shipping updates.
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<div class="form-check">
+							{{form.need_bot_setup}}
+							<label class="form-check-label" for="flexCheckDefault1">
+								{{form.need_bot_setup.label}}
+							</label>
+						</div>
+
+						<div class="form-check">
+							{{form.need_server_setup}}
+							<label class="form-check-label" for="flexCheckDefault2">
+								{{form.need_server_setup.label}}
+							</label>
+						</div>
+
+						<div class="form-check">
+							{{form.need_payment_system}}
+							<label class="form-check-label" for="flexCheckDefault2">
+								{{form.need_payment_system.label}}
+							</label>
+						</div>
+					</div>
+
+					<div class="col-12 p-2">
+						{{form.tz_file}}
+					</div>
+
+				</div>
+				{% csrf_token %}
+				<button class="w-100 btn btn-primary btn-lg mt-5" type="submit">Завершить оформление заказа</button>
+			</form>
+		</div>
+	</div>
+
+	<script src='{% static "js/order_create_page.js" %}'></script>
+
+</div>
+
+{% endblock %}

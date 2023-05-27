@@ -4,6 +4,8 @@ from django.conf.global_settings import MEDIA_URL
 import os
 import datetime
 
+from .models import *
+
 
 user_roles = (
 	('user', 'user'),
@@ -26,3 +28,7 @@ def get_default_avatar():
 
 def get_sale_end_date():
 	return datetime.date.today() + datetime.timedelta(days=3)
+
+
+def get_order_tz_path(order_obj, filename):
+	return f'specifications/{order_obj.id}/{filename}'
