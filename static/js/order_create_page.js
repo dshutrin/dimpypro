@@ -18,9 +18,22 @@ create_element = (name, amount) => {
 	return li
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 create_total_sum = (amount) => {
 	li = document.createElement('li')
-	li.className = 'list-group-item d-flex justify-content-between lh-sm'
+	let price = parseFloat(document.getElementById('user_balance').value.replace(",", "."));
+
+	console.log(price)
+
+	if (amount <= price){
+		li.className = 'list-group-item d-flex justify-content-between lh-sm text-bg-success'
+	}
+	else {
+		li.className = 'list-group-item d-flex justify-content-between lh-sm text-bg-danger'
+	}
 	div = document.createElement('div')
 	h6 = document.createElement('h6')
 	h6.className = 'my-0'
@@ -52,26 +65,16 @@ fill_components_box = (data) => {
 
 get_order_price = () => {
 	let xhr = new XMLHttpRequest();
-	xhr.open('POST', '/account/order/get_price');
-	xhr.setRequestHeader("X-CSRFToken", $("[name=csrfmiddlewaretoken]").val())
 
 	let need_server_setup = document.getElementById("id_need_server_setup").checked
 	let need_bot_setup = document.getElementById("id_need_bot_setup").checked
 	let need_payment_system = document.getElementById("id_need_payment_system").checked
-	let promo = $('#id_promo').val()
 
-	let data = new FormData();
-	data.append('need_server_setup', need_server_setup);
-	data.append('need_bot_setup', need_bot_setup);
-	data.append('need_payment_system', need_payment_system);
-	data.append('promo', promo);
-
-	xhr.send(data)
+	xhr.open('GET', '/account/order/get_price/' + need_server_setup + '/' + need_bot_setup + '/' + need_payment_system);
+	xhr.send()
 	xhr.responseType = 'json'
 
 	xhr.onloadend = () => {
 		fill_components_box(xhr.response)
 	}
 }
-
-get_order_price()

@@ -6,10 +6,11 @@ register_converter(FloatUrlParameterConverter, 'float')
 
 urlpatterns = [
 	path('', self_page),
+	path('get_balance', get_user_balance),
 	path('order/create', create_order),
 	path('orders', all_orders),
 	path('orders/<int:order_id>', order_detail),
-	path('order/get_price', get_order_price),
+	path('order/get_price/<str:need_server_setup>/<str:need_bot_setup>/<str:need_payment_system>', get_order_price),
 	path('admin', admin),
 	path('admin/bonuses', bonuses),
 	path('admin/orders', admin_orders),

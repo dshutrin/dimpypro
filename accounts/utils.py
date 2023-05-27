@@ -1,6 +1,7 @@
 import datetime
 from random import choice as ch
-from django.conf.global_settings import MEDIA_URL
+from django.conf.global_settings import MEDIA_URL, MEDIA_ROOT
+from django.conf import settings
 import os
 import datetime
 
@@ -30,5 +31,13 @@ def get_sale_end_date():
 	return datetime.date.today() + datetime.timedelta(days=3)
 
 
-def get_order_tz_path(order_obj, filename):
-	return f'specifications/{order_obj.id}/{filename}'
+def get_order_tz_path(order_obj, filename, full=False):
+	path = f'specifications/{order_obj.user.username}/{filename}'
+	if not full:
+		return f'specifications/{order_obj.user.username}/{filename}'
+	while os.path.exists(os.path.join(settings.BASE_DIR, 'media', path)):
+		filename = f'1{filename}'
+		path = f'specifications/{order_obj.user.username}/{filename}'
+	full_path = os.path.join(settings.BASE_DIR, 'media', path)
+
+	return full_path, path

@@ -75,6 +75,10 @@ class Order(Model):
 			'Подключение платёжной системы': int(self.need_payment_system) * 1500
 		}
 
+	def set_price(self):
+		self.price = int(self.need_server_setup) * 500 + int(self.need_bot_setup) * 500 + int(self.need_payment_system) * 1500 + 3000
+		self.save()
+
 	def __str__(self):
 		return f'Заказ №{self.id} {self.user.username} ({self.status.text})'
 

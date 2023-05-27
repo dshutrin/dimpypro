@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.core.files.storage import default_storage
 
 from .models import *
 from .forms import *
@@ -101,6 +102,13 @@ def order_detail(request, order_id):
 	for i in range(1, order.status.id+1):
 		buttons[i-1] = 1
 
+	oft = 'None'
+	if order.tz_file:
+		if order.tz_file.path.endswith('docx'):
+			oft = 'docx'
+		else:
+			oft = 'pdf'
+
 	messages = Message.objects.filter(order__id=order_id)
 
 	return render(request, 'accounts/order_detail.html', {
@@ -113,7 +121,8 @@ def order_detail(request, order_id):
 		'percent': (sum(buttons)-1) * 20,
 		'order': order,
 		'messages': messages,
-		'messages_count': messages.count
+		'messages_count': messages.count,
+		'order_file_type': oft
 	})
 
 
@@ -189,13 +198,20 @@ def admin_order(request, order_id):
 				buttons[i - 1] = 1
 
 			messages = Message.objects.filter(order=order)
+			oft = 'None'
+			if order.tz_file:
+				if order.tz_file.path.endswith('docx'):
+					oft = 'docx'
+				else:
+					oft = 'pdf'
 
 			return render(request, 'accounts/admin_order_detail.html', {
 				'order': order,
 				'order_status': order.status.text,
 				'percent': (sum(buttons) - 1) * 20,
 				'messages': messages,
-				'messages_count': messages.count
+				'messages_count': messages.count,
+				'order_file_type': oft
 			})
 
 		else:
@@ -243,22 +259,49 @@ def create_order(request):
 	if request.POST:
 		form = OrderForm(request.POST)
 
-		if form.is_valid():
-			print('valid!')
+		if 'tz_file' in request.FILES:
+			order = Order.objects.create(
+				user=request.user,
+				title=request.POST['title'] or 'False',
+				description=request.POST['description'] or '',
+				status=OrderStatus.objects.get(id=1),
+				need_server_setup={'on': True, 'off': False}[request.POST['need_server_setup']] if ('need_server_setup' in request.POST) else False,
+				need_bot_setup={'on': True, 'off': False}[request.POST['need_bot_setup']] if ('need_bot_setup' in request.POST) else False,
+				need_payment_system={'on': True, 'off': False}[request.POST['need_payment_system']] if ('need_payment_system' in request.POST) else False,
+				email=request.POST['email'],
+				tz_file=request.FILES['tz_file']
+			)
 		else:
-			pass
+			order = Order.objects.create(
+				user=request.user,
+				title=request.POST['title'] or 'False',
+				description=request.POST['description'] or '',
+				status=OrderStatus.objects.get(id=1),
+				need_server_setup={'on': True, 'off': False}[request.POST['need_server_setup']] if ('need_server_setup' in request.POST) else False,
+				need_bot_setup={'on': True, 'off': False}[request.POST['need_bot_setup']] if ('need_bot_setup' in request.POST) else False,
+				need_payment_system={'on': True, 'off': False}[request.POST['need_payment_system']] if ('need_payment_system' in request.POST) else False,
+				email=request.POST['email']
+			)
+
+		order.set_price()
+		return HttpResponseRedirect('/account/orders')
 
 	return render(request, 'accounts/create_order_page.html', {'form': form})
 
 
 @login_required
-def get_order_price(request):
-	if request.method == 'POST':
+def get_order_price(request, need_server_setup, need_bot_setup, need_payment_system):
+	if request.method == 'GET':
 		order = Order(
-			need_server_setup={'true': True, 'false': False}[request.POST['need_server_setup']],
-			need_bot_setup={'true': True, 'false': False}[request.POST['need_bot_setup']],
-			need_payment_system={'true': True, 'false': False}[request.POST['need_payment_system']]
+			need_server_setup={'true': True, 'false': False}[need_server_setup],
+			need_bot_setup={'true': True, 'false': False}[need_bot_setup],
+			need_payment_system={'true': True, 'false': False}[need_payment_system]
 		)
 		return JsonResponse(order.get_price())
 	else:
 		return JsonResponse({'error': True})
+
+
+@login_required
+def get_user_balance(request):
+	return JsonResponse({'balance': request.user.balance})
