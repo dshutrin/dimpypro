@@ -4,8 +4,7 @@ from django.conf.global_settings import MEDIA_URL, MEDIA_ROOT
 from django.conf import settings
 import os
 import datetime
-
-from .models import *
+from datetime import date, timedelta
 
 
 user_roles = (

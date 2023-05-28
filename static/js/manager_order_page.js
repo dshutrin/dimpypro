@@ -121,7 +121,58 @@ edit_github_link_func = () => {
 
 
 back_link = () => {
-	console.log('---------')
+	document.getElementById('send_new_github_link').remove()
+	document.getElementById('new_github_link_input').remove()
+	document.getElementById('back_button').remove()
+
+	let git_link = ''
+	let order_id = document.getElementById('order_id_input').value
+
+	let xhr = new XMLHttpRequest()
+	xhr.open('GET', '/account/admin/order/' + order_id + '/get_git_link')
+    xhr.send()
+    xhr.responseType = 'json'
+
+    xhr.onloadend = () => {
+
+        if (xhr.response['ok'] == true){
+			git_link = xhr.response['git_link']
+        }
+
+		let emp_div = document.createElement('div')
+		emp_div.setAttribute('id', 'empty_link_div')
+		emp_div.className = 'form-control'
+		let link = document.createElement('a')
+		link.className = 'text-decoration-none'
+		link.setAttribute('target', '_blank')
+		link.setAttribute('href', git_link)
+		link.innerHTML = git_link
+		emp_div.appendChild(link)
+
+		let button = document.createElement('button')
+		button.className = 'btn btn-primary'
+		button.setAttribute('id', 'edit_github_link')
+		button.setAttribute('onclick', 'edit_github_link_func()')
+		let svg = document.createElementNS("http://www.w3.org/2000/svg", 'svg')
+	    svg.setAttribute('width', '20');
+	    svg.setAttribute('height', '20');
+		svg.setAttribute('fill', "currentColor");
+		svg.setAttribute('viewBox', "0 0 16 16");
+		svg.className="bi bi-pen-fill"
+		let iconPath = document.createElementNS(
+		    'http://www.w3.org/2000/svg',
+		    'path'
+		);
+		iconPath.setAttribute(
+		    'd',
+			"m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001z"
+		);
+		svg.appendChild(iconPath)
+		button.appendChild(svg)
+
+		document.getElementById('link_form').appendChild(emp_div)
+		document.getElementById('link_form').appendChild(button)
+	}
 }
 
 

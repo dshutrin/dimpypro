@@ -328,3 +328,33 @@ def set_git_link(request, order_id):
 			return JsonResponse({'ok': False})
 	else:
 		return JsonResponse({'ok': False})
+
+
+@login_required
+def get_git_link(request, order_id):
+	order = Order.objects.filter(id=order_id)
+	if len(order) > 0:
+		order = order[0]
+		return JsonResponse({'ok': True, 'git_link': order.answer_link})
+	else:
+		return JsonResponse({'ok': False})
+
+
+@login_required
+def get_last_week_orders_view(request):
+	if request.user.is_superuser:
+		today = date.today()
+		seven_day_before = today - timedelta(days=7)
+		last_week_orders = Order.objects.filter(created_at__gte=seven_day_before)
+		ans = {'ok': True, 'labels': [
+			str(today - timedelta(days=i)) for i in reversed(range(7))
+		], 'values': [0, 0, 0, 0, 0, 0, 0]}
+
+		for order in last_week_orders:
+			ans['values'][
+				ans['labels'].index(str(order.created_at))
+			] += 1
+
+		return JsonResponse(ans)
+	else:
+		return JsonResponse({'error': True})
