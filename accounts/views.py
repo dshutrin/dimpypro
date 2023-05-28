@@ -310,3 +310,21 @@ def get_order_price(request, need_server_setup, need_bot_setup, need_payment_sys
 @login_required
 def get_user_balance(request):
 	return JsonResponse({'balance': request.user.balance})
+
+
+@login_required
+def set_git_link(request, order_id):
+	if request.method == 'POST':
+		if request.user.is_superuser:
+			order = Order.objects.get(id=order_id)
+
+			print(request.body)
+			new_link = request.body.decode('utf-8')
+
+			order.answer_link = new_link
+			order.save()
+			return JsonResponse({'ok': True})
+		else:
+			return JsonResponse({'ok': False})
+	else:
+		return JsonResponse({'ok': False})

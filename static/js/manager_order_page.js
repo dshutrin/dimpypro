@@ -59,3 +59,95 @@ send_manager_message = () => {
 		show_toast()
     }
 }
+
+
+edit_github_link_func = () => {
+	let input = document.createElement('input')
+	input.className = 'form-control'
+	input.placeholder = 'Введите новую ссылку'
+	input.setAttribute('id', 'new_github_link_input')
+
+	document.getElementById('empty_link_div').replaceWith(input)
+
+	let button = document.createElement('button')
+	button.className = 'btn btn-primary'
+	button.setAttribute('id', 'send_new_github_link')
+	button.setAttribute('onclick', 'send_new_github_link()')
+
+
+	let back_button = document.createElement('button')
+	back_button.className = 'btn btn-primary'
+	back_button.setAttribute('id', 'back_button')
+	back_button.setAttribute('onclick', 'back_link()')
+
+
+		let svg = document.createElementNS("http://www.w3.org/2000/svg", 'svg')
+	    svg.setAttribute('width', '20');
+	    svg.setAttribute('height', '20');
+		svg.setAttribute('fill', "currentColor");
+		svg.setAttribute('viewBox', "0 0 16 16");
+		svg.className="bi-check-lg"
+		let iconPath = document.createElementNS(
+		    'http://www.w3.org/2000/svg',
+		    'path'
+		);
+		iconPath.setAttribute(
+		    'd',
+		    "M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"
+		);
+		svg.appendChild(iconPath)
+
+	back_button.appendChild(svg)
+	document.getElementById('link_form').insertBefore(back_button, document.getElementById('link_form').firstChild);
+
+	svg = document.createElementNS("http://www.w3.org/2000/svg", 'svg')
+    svg.setAttribute('width', '20');
+    svg.setAttribute('height', '20');
+	svg.setAttribute('fill', "currentColor");
+	svg.setAttribute('viewBox', "0 0 16 16");
+	svg.className="bi-check-lg"
+	iconPath = document.createElementNS(
+	    'http://www.w3.org/2000/svg',
+	    'path'
+	);
+	iconPath.setAttribute(
+	    'd',
+	    "M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"
+	);
+	svg.appendChild(iconPath)
+	button.appendChild(svg)
+	document.getElementById('edit_github_link').replaceWith(button)
+}
+
+
+back_link = () => {
+	console.log('---------')
+}
+
+
+send_new_github_link = () => {
+	let new_link = document.getElementById('new_github_link_input').value
+	if (new_link.startsWith('https://github.com/') || new_link == '') {
+
+		let order_id = document.getElementById('order_id_input').value
+		let xhr = new XMLHttpRequest()
+		xhr.open('POST', '/account/admin/order/' + order_id + '/set_git_link')
+		xhr.setRequestHeader("X-CSRFToken", $("[name=csrfmiddlewaretoken]").val())
+	    xhr.send(new_link)
+	    xhr.responseType = 'json'
+
+	    xhr.onloadend = () => {
+
+	        if (xhr.response['ok'] == true){
+				back_link()
+				$('#linkError').hide()
+	        } else {
+				$('#linkError').show()
+	        }
+
+	    }
+
+	} else {
+		$('#linkError').show()
+	}
+}

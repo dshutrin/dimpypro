@@ -16,6 +16,7 @@ urlpatterns = [
 	path('admin/orders', admin_orders),
 	path('admin/order/<int:order_id>', admin_order),
 	path('admin/order/<int:order_id>/send_msg', order_messages),
+	path('admin/order/<int:order_id>/set_git_link', set_git_link),
 	path('admin/bonuses/<int:user_id>', bonus_page),
 	path('admin/bonuses/get_users/<str:data>', get_users),
 	path('admin/bonuses/new/<int:user_id>/<float:bonus_count>', get_bonus),

@@ -8,6 +8,7 @@ from django.db.models import Q
 
 from .utils import *
 from .managers import *
+from .validators import *
 
 
 # Create your models here.
@@ -66,6 +67,7 @@ class Order(Model):
 	need_payment_system = models.BooleanField(verbose_name='Требуется платёжная система', default=False)
 	email = models.EmailField(verbose_name='Email для чека', default=None, null=True)
 	tz_file = models.FileField(verbose_name='Файл с техническим заданием', upload_to=get_order_tz_path, default=None, null=True, blank=True)
+	answer_link = models.CharField(verbose_name='Ссылка на github репозиторий с проектом', max_length=255, default='', validators=[github_link_validator], null=True, blank=True)
 
 	def get_price(self):
 		return {
