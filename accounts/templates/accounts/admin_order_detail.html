@@ -50,6 +50,26 @@
 						</a>
 					{% endif %}
 				{% endif %}
+
+				<ol class="list-group w-75 mt-3">
+					{% if order.need_server_setup %}
+					<li class="list-group-item d-flex justify-content-between align-items-start">
+						<div class="ms-2 me-auto">
+							<div class="fw-bold">Требуется установка/настройка сервера</div>
+						</div>
+						<span title="Следует обратить внимание!" class="badge text-dark bg-warning rounded-pill">!</span>
+					</li>
+					{% endif %}
+					{% if order.need_bot_setup %}
+					<li class="list-group-item d-flex justify-content-between align-items-start">
+						<div class="ms-2 me-auto">
+							<div class="fw-bold">Требуется установка бота на сервер</div>
+						</div>
+						<span title="Следует обратить внимание!" class="badge text-dark bg-warning rounded-pill">!</span>
+					</li>
+					{% endif %}
+				</ol>
+
 			</div>
 			<div class="card-footer">
 				Заявка подана: {{order.created_at}}

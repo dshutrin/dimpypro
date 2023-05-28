@@ -142,12 +142,17 @@ back_link = () => {
 		let emp_div = document.createElement('div')
 		emp_div.setAttribute('id', 'empty_link_div')
 		emp_div.className = 'form-control'
-		let link = document.createElement('a')
-		link.className = 'text-decoration-none'
-		link.setAttribute('target', '_blank')
-		link.setAttribute('href', git_link)
-		link.innerHTML = git_link
-		emp_div.appendChild(link)
+
+		if (git_link == null){
+			emp_div.innerHTML = 'Ссылка на github репозиторий'
+		} else {
+			let link = document.createElement('a')
+			link.className = 'text-decoration-none'
+			link.setAttribute('target', '_blank')
+			link.setAttribute('href', git_link)
+			link.innerHTML = git_link
+			emp_div.appendChild(link)
+		}
 
 		let button = document.createElement('button')
 		button.className = 'btn btn-primary'
