@@ -40,3 +40,7 @@ def get_order_tz_path(order_obj, filename, full=False):
 	full_path = os.path.join(settings.BASE_DIR, 'media', path)
 
 	return full_path, path
+
+
+def get_util_file_path(util_obj, filename):
+	return f'utils/{filename}'

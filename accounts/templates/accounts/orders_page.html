@@ -6,6 +6,16 @@
 		<h1>Ваши заказы</h1>
 	</div>
 	<div class="container-fluid">
+
+		{% if orders_count == 0 %}
+			<div class="text-center mt-5 pt-5">
+				<h1 class="mt-5 pt-5">У вас нет заказов!</h1>
+				<div class="col-12 mb-3">
+					<a href="/account/order/create" class="btn shadow btn-primary w-25">Оформить новый заказ</a>
+				</div>
+			</div>
+		{% endif %}
+
 		{% for status in statuses %}
 		<hr>
 		<div class="row">

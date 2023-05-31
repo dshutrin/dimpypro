@@ -3,16 +3,31 @@
 
 {% block admin_content %}
 
-	<h1>История пополнений</h1>
+	<h1>Финансы</h1>
+
+	{% if total_payments_price < total_ordered_price %}
+		<div class="alert alert-danger d-flex align-items-center justify-content-center text-center mx-5" style="max-height: 100px;" role="alert">
+			<svg height="80" width="80" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="bi flex-shrink-0 me-5" viewBox="0 0 16 16">
+				<path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+			</svg>
+			<strong>Внимание!</br>Обнаружена несостыковка в финансах!</strong>
+		</div>
+	{% endif %}
 
 	<div class="container mt-5">
-		<div class="row">
-			<div class="col-6">
-
+		<div class="row mb-4">
+			<div class="col-6 text-start">
+				<div class="text-center">
+					<h5>Общее</h5>
+				</div>
+				<span style="font-size: 24px;"><strong>Реализовано: </strong>{{realized}}</span></br>
+				<span style="font-size: 24px;"><strong>Не реализовано: </strong>{{not_realized}}</span>
+				<hr>
+				<span style="font-size: 24px;"><strong>Всего: </strong>{{total_ordered_price}}</span>
 			</div>
 			<div class="col-6">
 				<div class="text-center">
-					<h5>История</h5>
+					<h5>История зачислений</h5>
 				</div>
 				<table class="table table-striped table-bordered" style="font-size: 12px;">
 					<thead>
@@ -24,20 +39,44 @@
 					    </tr>
 					</thead>
 					<tbody>
+						{% for payment in payments %}
 							<tr>
-								<th colspan="2">Всего</th>
-								<td colspan="2">{{summ}}</td>
+								<th scope="row">{{payment.date}}</th>
+								<td>{{payment.manager}}</td>
+								<td>{{payment.to}}</td>
+								<td><strong class="text-success">
+									{{payment.amount}}
+								</strong></td>
 							</tr>
-							{% for payment in payments %}
-									<tr>
-										<th scope="row">{{payment.date}}</th>
-										<td>{{payment.manager}}</td>
-										<td>{{payment.to}}</td>
-										<td><strong class="text-success">
-											{{payment.amount}}
-										</strong></td>
-									</tr>
-							{% endfor %}
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-6"></div>
+			<div class="col-6">
+				<div class="text-center">
+					<h5>История Заказов</h5>
+				</div>
+				<table class="table table-striped table-bordered" style="font-size: 12px;">
+					<thead>
+					    <tr>
+							<th scope="col">Дата</th>
+							<th scope="col">Клиент</th>
+							<th scope="col">Сумма</th>
+					    </tr>
+					</thead>
+					<tbody>
+						{% for order in orders %}
+							<tr>
+								<th scope="row">{{order.created_at}}</th>
+								<td>{{order.user.username}}</td>
+								<td><strong class="text-success">
+									{{order.price}}
+								</strong></td>
+							</tr>
+						{% endfor %}
 					</tbody>
 				</table>
 			</div>

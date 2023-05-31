@@ -3,8 +3,8 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
-from django.utils.timezone import now
-from django.db.models import Q
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 from .utils import *
 from .managers import *
@@ -115,3 +115,37 @@ class Message(Model):
 	class Meta:
 		verbose_name = 'Сообщение'
 		verbose_name_plural = 'Сообщения'
+
+
+class Utilit(Model):
+	title = models.CharField(verbose_name='Название', max_length=255)
+	description = models.TextField(verbose_name='Описание')
+	price = models.FloatField(verbose_name='Цена')
+	file = models.FileField(verbose_name='Решение', upload_to=get_util_file_path, default=None, null=True, blank=True)
+
+	def __str__(self):
+		return f'Утилита "{self.title}"'
+
+	class Meta:
+		verbose_name = 'Утилита'
+		verbose_name_plural = 'Утилиты'
+
+
+class PaidUtils(Model):
+	user = models.ForeignKey(get_user_model(), verbose_name='Пользователь', on_delete=models.CASCADE, null=True)
+	util = models.ForeignKey(Utilit, verbose_name='Утилита', on_delete=models.SET_NULL, null=True)
+
+	def __str__(self):
+		return f'{self.user.username} -> {self.util.title}'
+
+	class Meta:
+		verbose_name = 'Купленная утилита'
+		verbose_name_plural = 'Купленные утилиты'
+
+
+@receiver(post_delete, sender=Order)
+def order_specification_delete(sender, instance, **kwargs):
+	try:
+		os.remove(os.path.join(MEDIA_URL, instance.tz_file.path))
+	except Exception as e:
+		print('file delete error')

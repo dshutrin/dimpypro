@@ -9,6 +9,8 @@ admin.site.register(OrderStatus)
 admin.site.register(DefaultProfileImage)
 admin.site.register(CustomUser)
 admin.site.register(Message)
+admin.site.register(Utilit)
+admin.site.register(PaidUtils)
 
 
 class PaymentHistoryAdmin(admin.ModelAdmin):

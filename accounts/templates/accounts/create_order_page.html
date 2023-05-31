@@ -87,13 +87,22 @@
 					<div class="col-12 p-2">
 						<div class="card p-1">
 							<span class="p-1">Файл с техническим заданием</span>
+							{% if edit %}
+								{% if file %}
+									<span style="font-size: 10px;">Выбрано: <a target="_blank" class="text-decoration-none" href="{{path}}">Текущий файл</a></span>
+								{% endif %}
+							{% endif %}
 							{{form.tz_file}}
 						</div>
 					</div>
 
 				</div>
 				{% csrf_token %}
-				<button class="w-100 btn btn-primary btn-lg mt-5" type="submit">Завершить оформление заказа</button>
+				{% if edit %}
+					<button class="w-100 btn btn-primary btn-lg mt-5" type="submit">Сохранить изменения</button>
+				{% else %}
+					<button class="w-100 btn btn-primary btn-lg mt-5" type="submit">Завершить оформление заказа</button>
+				{% endif %}
 			</form>
 		</div>
 	</div>

@@ -76,6 +76,8 @@ TIME_ZONE = 'Asia/Vladivostok'
 USE_I18N = True
 USE_TZ = True
 
+LOGIN_URL = '/login'
+
 
 STATIC_URL = 'static/'
 

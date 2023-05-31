@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.core.files.storage import default_storage
+from django.db.models import Q
 
 from .models import *
 from .forms import *
@@ -31,10 +32,7 @@ def self_page(request):
 def admin(request):
 	if request.user.is_superuser:
 		return render(request, 'accounts/admin_panel.html', {
-			'total_users_count': get_user_model().objects.all().count,
-			'orders_count': Order.objects.filter(status__id=1).count,
-			'in_process_orders_count': Order.objects.filter(status__id__range=(2, 5)).count,
-			'completed_orders_count': Order.objects.filter(status__id=6).count
+			'total_users_count': get_user_model().objects.all().count
 		})
 	else:
 		return HttpResponseRedirect('/')
@@ -43,14 +41,10 @@ def admin(request):
 @login_required
 def bonuses(request):
 	if request.user.is_superuser:
-		if request.method == 'POST':
-			pass
-		elif request.method == 'GET':
+		if request.method == 'GET':
 			return render(request, 'accounts/bonuses.html', {'form': SearchUserForm(), 'users': [{
 					'username': x.username,
-					'id': x.id,
-					'first_name': x.first_name,
-					'last_name': x.last_name
+					'id': x.id
 				} for x in get_user_model().objects.all()]})
 		else:
 			return HttpResponse(f'HTTP method {request.method} not allowed on this page!')
@@ -89,6 +83,7 @@ def get_users(request, data):
 def all_orders(request):
 	orders_ = Order.objects.filter(user__id=request.user.id)
 	return render(request, 'accounts/orders_page.html', {
+		'orders_count': len(orders_),
 		'statuses': [x.text for x in OrderStatus.objects.all() if x in [s.status for s in orders_]][::-1],
 		'orders': orders_
 	})
@@ -224,10 +219,17 @@ def admin_order(request, order_id):
 
 @login_required
 def bonus_history(request):
-	history = PaymentHistory.objects.all().order_by('-date')
+	history = PaymentHistory.objects.all().order_by('-date')[:25]
+	orders = Order.objects.all()
+	orders_history = orders.order_by('-created_at')[:25]
 	return render(request, 'accounts/admin_history.html', {
 		'payments': history,
-		'summ': sum([x.amount for x in history])
+		'summ': sum([x.amount for x in history]),
+		'not_realized': sum([x.price for x in orders.filter(~Q(status__text='Готово'))]),
+		'realized': sum([x.price for x in orders.filter(status__text='Готово')]),
+		'total_ordered_price': sum([x.price for x in orders]),
+		'total_: payments_price': sum([x.amount for x in PaymentHistory.objects.all()]),
+		'orders': orders_history
 	})
 
 
@@ -379,3 +381,65 @@ def set_order_status(request, order_id, status_id):
 		return JsonResponse({'ok': True, 'status': status[0].text})
 	else:
 		return JsonResponse({'ok': False})
+
+
+@login_required
+def edit_order(request, order_id):
+	form = OrderForm()
+	payment_status = 'True'
+	order = Order.objects.get(id=order_id)
+
+	if request.POST:
+		form = OrderForm(request.POST)
+
+		post = [
+			request.POST.get(x, False) for x in ['title', 'description', 'email']
+		]
+		if all(post):
+
+			order.title = request.POST['title'] or 'False'
+			order.description = request.POST['description'] or ''
+			order.status = OrderStatus.objects.get(id=1)
+			order.need_server_setup = {'on': True, 'off': False}[request.POST['need_server_setup']] if ('need_server_setup' in request.POST) else False
+			order.need_bot_setup = {'on': True, 'off': False}[request.POST['need_bot_setup']] if ('need_bot_setup' in request.POST) else False
+			order.need_payment_system = {'on': True, 'off': False}[request.POST['need_payment_system']] if ('need_payment_system' in request.POST) else False
+			order.email = request.POST['email']
+
+			if request.FILES:
+				os.remove(os.path.join(MEDIA_URL, order.tz_file.path))
+				order.tz_file = request.FILES['tz_file']
+
+			order.set_price()
+			return HttpResponseRedirect('/account/orders')
+
+	else:
+		form = OrderForm(initial={
+			'user': order.user,
+			'title': order.title,
+			'description': order.description,
+			'status': order.status,
+			'need_server_setup': order.need_server_setup,
+			'need_bot_setup': order.need_bot_setup,
+			'need_payment_system': order.need_payment_system,
+			'email': order.email
+		})
+
+	return render(request, 'accounts/create_order_page.html', {'form': form, 'edit': True, "file": True, 'path': order.tz_file.url})
+
+
+@login_required
+def utils(request):
+
+	class UtilView:
+		def __init__(self, util, paid):
+			self.util = util
+			self.paid = paid
+
+	utils = []
+	for util in Utilit.objects.all():
+		if len(PaidUtils.objects.filter(user=request.user, util=util)) > 0:
+			utils.append(UtilView(util, True))
+		else:
+			utils.append(UtilView(util, False))
+
+	return render(request, 'accounts/utils_page.html', {'utils': utils})
