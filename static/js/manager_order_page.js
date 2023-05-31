@@ -143,7 +143,7 @@ back_link = () => {
 		emp_div.setAttribute('id', 'empty_link_div')
 		emp_div.className = 'form-control'
 
-		if (git_link == null){
+		if (git_link == null || git_link == ''){
 			emp_div.innerHTML = 'Ссылка на github репозиторий'
 		} else {
 			let link = document.createElement('a')

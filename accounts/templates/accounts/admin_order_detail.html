@@ -12,9 +12,12 @@
 			<div class="progress" role="progressbar" aria-label="Progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 5px;">
 			<div class="progress-bar" style="width: 100%"></div>
 		</div>
-		<button type="button" class="position-absolute top-0 translate-middle btn btn-sm btn-primary rounded-pill" style="width: 10rem; height:2rem;">
-			{{order_status}}
-		</button>
+		<select id="status_select" onchange="change_order_status()" class="position-absolute top-0 translate-middle btn btn-sm btn-primary rounded-pill form-select form-select-lg mb-3" style="width: 10rem; height:2rem;" aria-label=".form-select-lg пример">
+			<option selected>{{order_status}}</option>
+			{% for status in statuses %}
+				<option value="{{status.id}}">{{status.text}}</option>
+			{% endfor %}
+		</select>
 	</div>
 		</div>
 </div>
@@ -155,6 +158,16 @@
 			<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Закрыть"></button>
 		</div>
 		<div id="payment_success_text" class="toast-body"></div>
+	</div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+	<div id="liveToast2" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+		<div id="header_div2" class="toast-header text-bg-success">
+			<strong id="status_change_title" class="me-auto"></strong>
+			<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Закрыть"></button>
+		</div>
+		<div id="status_change_text" class="toast-body"></div>
 	</div>
 </div>
 

@@ -61,7 +61,7 @@ class Order(Model):
 	description = models.TextField(verbose_name='Описание заказа', blank=True)
 	price = models.FloatField(verbose_name='Стоимость', blank=True, null=True)
 	status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE, null=False, default=0)
-	created_at = models.DateField(verbose_name='Дата подачи', auto_now=True)
+	created_at = models.DateField(verbose_name='Дата подачи', auto_now_add=True)
 	need_server_setup = models.BooleanField(verbose_name='Требуется установка/настройка сервера', default=False)
 	need_bot_setup = models.BooleanField(verbose_name='Требуется установка бота на сервер', default=False)
 	need_payment_system = models.BooleanField(verbose_name='Требуется платёжная система', default=False)

@@ -6,31 +6,53 @@
 	<h1>История пополнений</h1>
 
 	<div class="container mt-5">
-		{% for date in dates %}
-			<h3>{{date}}</h3>
-			{% for payment in payments %}
-				{% if payment.date == date %}
-					<div class="card mb-3 mx-5">
-						<div class="card-body">
-							<div class="row" style="font-size: 20px;">
-								<div class="col-4">Менеджер: <span class="text-primary">{{payment.manager.username}}</span></div>
-								<div class="col-4">
-									<span class="h-100">{{payment.amount}}</span>
-									<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-gift text-danger" viewBox="0 0 16 16">
-									  <path d="M3 2.5a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 1 5 0v.006c0 .07 0 .27-.038.494H15a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 14.5V7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h2.038A2.968 2.968 0 0 1 3 2.506V2.5zm1.068.5H7v-.5a1.5 1.5 0 1 0-3 0c0 .085.002.274.045.43a.522.522 0 0 0 .023.07zM9 3h2.932a.56.56 0 0 0 .023-.07c.043-.156.045-.345.045-.43a1.5 1.5 0 0 0-3 0V3zM1 4v2h6V4H1zm8 0v2h6V4H9zm5 3H9v8h4.5a.5.5 0 0 0 .5-.5V7zm-7 8V7H2v7.5a.5.5 0 0 0 .5.5H7z"/>
-									</svg>
-								</div>
-								<div class="col-4">Клиент: <span class="text-success">{{payment.to.username}}</span></div>
-							</div>
-						</div>
-					</div>
+		<div class="row">
+			<div class="col-6">
 
-				{% endif %}
-			{% endfor %}
-		{% endfor %}
+			</div>
+			<div class="col-6">
+				<div class="text-center">
+					<h5>История</h5>
+				</div>
+				<table class="table table-striped table-bordered" style="font-size: 12px;">
+					<thead>
+					    <tr>
+							<th scope="col">Дата</th>
+							<th scope="col">Менеджер</th>
+							<th scope="col">Клиент</th>
+							<th scope="col">Сумма</th>
+					    </tr>
+					</thead>
+					<tbody>
+							<tr>
+								<th colspan="2">Всего</th>
+								<td colspan="2">{{summ}}</td>
+							</tr>
+							{% for payment in payments %}
+									<tr>
+										<th scope="row">{{payment.date}}</th>
+										<td>{{payment.manager}}</td>
+										<td>{{payment.to}}</td>
+										<td><strong class="text-success">
+											{{payment.amount}}
+										</strong></td>
+									</tr>
+							{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" type="text/javascript"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.min.js"></script>
+
 	<script src='{% static "js/admin_menu.js" %}'></script>
-	<script>set_history_admin_menu()</script>
+	<script>
+		set_history_admin_menu()
+	</script>
+
 
 {% endblock %}

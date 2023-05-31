@@ -211,7 +211,8 @@ def admin_order(request, order_id):
 				'percent': (sum(buttons) - 1) * 20,
 				'messages': messages,
 				'messages_count': messages.count,
-				'order_file_type': oft
+				'order_file_type': oft,
+				'statuses': OrderStatus.objects.all()
 			})
 
 		else:
@@ -223,17 +224,16 @@ def admin_order(request, order_id):
 
 @login_required
 def bonus_history(request):
-	history = PaymentHistory.objects.all()[::-1]
+	history = PaymentHistory.objects.all().order_by('-date')
 	return render(request, 'accounts/admin_history.html', {
-		'dates': set([x.date for x in history]),
-		'payments': history
+		'payments': history,
+		'summ': sum([x.amount for x in history])
 	})
 
 
 @login_required
 def order_messages(request, order_id):
 	if request.method == 'POST':
-		print('OKKKK')
 
 		message = Message.objects.create(
 			user=request.user,
@@ -355,6 +355,27 @@ def get_last_week_orders_view(request):
 				ans['labels'].index(str(order.created_at))
 			] += 1
 
+		statuses = {}
+		for order in Order.objects.all():
+			if not order.status.text in statuses:
+				statuses.update({order.status.text: 1})
+			else:
+				statuses[order.status.text] += 1
+
+		ans.update({'statuses': statuses})
+
 		return JsonResponse(ans)
 	else:
 		return JsonResponse({'error': True})
+
+
+@login_required
+def set_order_status(request, order_id, status_id):
+	order = Order.objects.filter(id=order_id)
+	status = OrderStatus.objects.filter(id=status_id)
+	if len(order) and len(status):
+		order[0].status = status[0]
+		order[0].save()
+		return JsonResponse({'ok': True, 'status': status[0].text})
+	else:
+		return JsonResponse({'ok': False})

@@ -18,6 +18,7 @@ urlpatterns = [
 	path('admin/order/<int:order_id>/send_msg', order_messages),
 	path('admin/order/<int:order_id>/set_git_link', set_git_link),
 	path('admin/order/<int:order_id>/get_git_link', get_git_link),
+	path('admin/order/<int:order_id>/set_status/<int:status_id>', set_order_status),
 	path('admin/get_last_week_orders', get_last_week_orders_view),
 	path('admin/bonuses/<int:user_id>', bonus_page),
 	path('admin/bonuses/get_users/<str:data>', get_users),
