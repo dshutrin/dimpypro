@@ -12,7 +12,7 @@
 			<div class="progress" role="progressbar" aria-label="Progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 5px;">
 			<div class="progress-bar" style="width: 100%"></div>
 		</div>
-		<select id="status_select" onchange="change_order_status()" class="position-absolute top-0 translate-middle btn btn-sm btn-primary rounded-pill form-select form-select-lg mb-3" style="width: 10rem; height:2rem;" aria-label=".form-select-lg пример">
+		<select id="status_select" onchange="change_order_status()" class="text-decoration-none position-absolute top-0 translate-middle btn btn-sm btn-primary rounded-pill form-select form-select-lg mb-3" style="width: 10rem; height:2rem;" aria-label=".form-select-lg пример">
 			<option selected>{{order_status}}</option>
 			{% for status in statuses %}
 				<option value="{{status.id}}">{{status.text}}</option>

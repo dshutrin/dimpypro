@@ -172,7 +172,7 @@ def admin_orders(request):
 
 		return render(request, 'accounts/admin_orders_page.html', {
 			'orders': orders_,
-			'statuses': [x.text for x in OrderStatus.objects.all() if len([a for a in orders_ if a.status == x]) > 0][::-1]
+			'statuses': [x.text for x in OrderStatus.objects.all() if len([a for a in orders_ if a.status == x]) > 0]
 		})
 
 	else:
@@ -222,13 +222,38 @@ def bonus_history(request):
 	history = PaymentHistory.objects.all().order_by('-date')[:25]
 	orders = Order.objects.all()
 	orders_history = orders.order_by('-created_at')[:25]
+
+	utils_top_ = {}
+	for act in PaidUtils.objects.all():
+		if act.util.title in utils_top_:
+			utils_top_[act.util] += 1
+		else:
+			utils_top_.update({act.util: 1})
+
+	utils_top = []
+	for act in utils_top_:
+		utils_top.append((act, utils_top_[act]))
+
+	utils_top = sorted(utils_top)
+
+	class Top:
+		def __init__(self, util, count):
+			self.util = util.title
+			self.count = count
+			self.price = util.price
+			self.total_amount = count * util.price
+
+	utils_top = [Top(x[0], x[1]) for x in utils_top]
+
 	return render(request, 'accounts/admin_history.html', {
 		'payments': history,
+		'utils_top': utils_top,
 		'summ': sum([x.amount for x in history]),
 		'not_realized': sum([x.price for x in orders.filter(~Q(status__text='Готово'))]),
 		'realized': sum([x.price for x in orders.filter(status__text='Готово')]),
-		'total_ordered_price': sum([x.price for x in orders]),
-		'total_: payments_price': sum([x.amount for x in PaymentHistory.objects.all()]),
+		'paid_utils': sum([x.util.price for x in PaidUtils.objects.all()]),
+		'total_realized_price': sum([x.price for x in orders]) + sum([x.util.price for x in PaidUtils.objects.all()]),
+		'total_payments_price': sum([x.amount for x in PaymentHistory.objects.all()]),
 		'orders': orders_history
 	})
 
@@ -424,7 +449,11 @@ def edit_order(request, order_id):
 			'email': order.email
 		})
 
-	return render(request, 'accounts/create_order_page.html', {'form': form, 'edit': True, "file": True, 'path': order.tz_file.url})
+	if order.tz_file:
+		return render(request, 'accounts/create_order_page.html', {'form': form, 'edit': True, "file": True, 'path': order.tz_file.url})
+	else:
+		return render(request, 'accounts/create_order_page.html',
+					  {'form': form, 'edit': True, "file": False})
 
 
 @login_required
