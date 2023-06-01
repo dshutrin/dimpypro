@@ -25,6 +25,7 @@ urlpatterns = [
 	path('admin/bonuses/get_users/<str:data>', get_users),
 	path('admin/bonuses/new/<int:user_id>/<float:bonus_count>', get_bonus),
 	path('admin/bonus_history', bonus_history),
-	path('utils', utils)
+	path('utils', utils),
+	path('utils/<int:util_id>', util_detail)
 ]
 

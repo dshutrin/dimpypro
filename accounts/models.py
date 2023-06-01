@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from django.core.validators import FileExtensionValidator
 
 from .utils import *
 from .managers import *
@@ -122,6 +123,7 @@ class Utilit(Model):
 	description = models.TextField(verbose_name='Описание')
 	price = models.FloatField(verbose_name='Цена')
 	file = models.FileField(verbose_name='Решение', upload_to=get_util_file_path, default=None, null=True, blank=True)
+	instruction = models.FileField(verbose_name='Инструкция', upload_to=get_util_instruction_path, default=None, null=True, blank=True, validators=[FileExtensionValidator(['html'])])
 
 	def __str__(self):
 		return f'Утилита "{self.title}"'

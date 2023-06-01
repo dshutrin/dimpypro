@@ -44,3 +44,7 @@ def get_order_tz_path(order_obj, filename, full=False):
 
 def get_util_file_path(util_obj, filename):
 	return f'utils/{filename}'
+
+
+def get_util_instruction_path(util_obj, filename):
+	return f'utils/{filename}'

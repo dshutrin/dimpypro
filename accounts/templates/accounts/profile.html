@@ -20,10 +20,10 @@
 
 <div class="row m-0 p-0">
 	<div class="col-5">
-		{% if sales_count > 0 %}
-			<div class="container">
-				<div class="row my-3">
-					<h2>Мои скидки</h2>
+		<div class="container">
+			<div class="row my-3">
+				<h2>Мои скидки</h2>
+				{% if sales_count > 0 %}
 					{% for sale in sales %}
 						<div class="col-6 mb-3">
 							<div class="card shadow border-success m-0 p-0 h-100">
@@ -37,9 +37,13 @@
 							</div>
 						</div>
 					{% endfor %}
-				</div>
+				{% else %}
+					<div class="alert alert-primary text-center w-50" role="alert">
+						<h3>У вас нет скидок!</h3>
+					</div>
+				{% endif %}
 			</div>
-		{% endif %}
+		</div>
 	</div>
 	<div class="col-7">
 		<div class="container">

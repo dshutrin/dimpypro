@@ -452,8 +452,7 @@ def edit_order(request, order_id):
 	if order.tz_file:
 		return render(request, 'accounts/create_order_page.html', {'form': form, 'edit': True, "file": True, 'path': order.tz_file.url})
 	else:
-		return render(request, 'accounts/create_order_page.html',
-					  {'form': form, 'edit': True, "file": False})
+		return render(request, 'accounts/create_order_page.html', {'form': form, 'edit': True, "file": False})
 
 
 @login_required
@@ -472,3 +471,17 @@ def utils(request):
 			utils.append(UtilView(util, False))
 
 	return render(request, 'accounts/utils_page.html', {'utils': utils})
+
+
+@login_required
+def util_detail(request, util_id):
+	util = Utilit.objects.get(id=util_id)
+	is_paid = len(PaidUtils.objects.filter(user=request.user, util=util)) > 0
+	instr = open(util.instruction.path, 'r', encoding='utf-8')
+	instr = instr.read()
+
+	return render(request, 'accounts/util_detail.html', {
+		'util': util,
+		'instruction': instr,
+		'is_paid': is_paid
+	})
