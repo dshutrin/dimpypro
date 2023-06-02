@@ -119,7 +119,7 @@ class Message(Model):
 
 
 class Utilit(Model):
-	title = models.CharField(verbose_name='Название', max_length=255)
+	title = models.CharField(verbose_name='Название', max_length=255, unique=True)
 	description = models.TextField(verbose_name='Описание')
 	price = models.FloatField(verbose_name='Цена')
 	file = models.FileField(verbose_name='Решение', upload_to=get_util_file_path, default=None, null=True, blank=True)

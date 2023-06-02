@@ -1,9 +1,12 @@
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, FileResponse
 from django.core.files.storage import default_storage
 from django.db.models import Q
+import shutil, zipfile
+from io import StringIO
+from django.conf import settings
 
 from .models import *
 from .forms import *
@@ -245,6 +248,16 @@ def bonus_history(request):
 
 	utils_top = [Top(x[0], x[1]) for x in utils_top]
 
+
+	cash_error = False
+
+	payments = sum([x.amount for x in PaymentHistory.objects.all()])
+	paid_utils = sum([x.util.price for x in PaidUtils.objects.all()])
+	paid_orders = sum([x.price for x in Order.objects.all()])
+
+	if payments < paid_orders + paid_utils:
+		cash_error = True
+
 	return render(request, 'accounts/admin_history.html', {
 		'payments': history,
 		'utils_top': utils_top,
@@ -254,7 +267,8 @@ def bonus_history(request):
 		'paid_utils': sum([x.util.price for x in PaidUtils.objects.all()]),
 		'total_realized_price': sum([x.price for x in orders]) + sum([x.util.price for x in PaidUtils.objects.all()]),
 		'total_payments_price': sum([x.amount for x in PaymentHistory.objects.all()]),
-		'orders': orders_history
+		'orders': orders_history,
+		'cash_error': cash_error
 	})
 
 
@@ -485,3 +499,31 @@ def util_detail(request, util_id):
 		'instruction': instr,
 		'is_paid': is_paid
 	})
+
+
+@login_required
+def download_util(request, util_id):
+	util = Utilit.objects.filter(id=util_id)
+	if len(util) > 0:
+
+		util = util[0]
+
+		if util.file:
+			folder = '\\'.join(util.file.path.split('\\')[:-1])
+			filenames = os.listdir(folder)
+			for i in range(len(filenames)):
+				filenames[i] = os.path.join(folder, filenames[i])
+
+			response = HttpResponse(content_type='application/zip')
+
+			with zipfile.ZipFile(response, 'w') as zip:
+				for filepath in filenames:
+					zip.write(filepath, os.path.basename(filepath))
+
+				response['Content-Disposition'] = f'attachment; filename="{util.title}.zip"'
+				return response
+
+		else:
+			return HttpResponse(status=404)
+	else:
+		return HttpResponse(status=404)
