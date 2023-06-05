@@ -125,7 +125,15 @@
 			</div>
 		</div>
 
-
+		{% if order.answer_link %}
+			<div class="card mt-3 text-center">
+				<div id="link_form" class="input-group">
+					<div id="empty_link_div" class="form-control">
+						<a target="_blank" class="text-decoration-none" href="{{order.answer_link}}">{{order.answer_link}}</a>
+					</div>
+				</div>
+			</div>
+		{% endif %}
 
 	</div>
 </div>

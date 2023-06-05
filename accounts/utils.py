@@ -48,8 +48,3 @@ def get_util_file_path(util_obj, filename):
 
 def get_util_instruction_path(util_obj, filename):
 	return f'utils/{util_obj.title}/{filename}'
-
-
-def test():
-
-	shutil.make_archive('D:/myzip', 'zip', 'D:/dimpypro/media/utils')

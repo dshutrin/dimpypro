@@ -1,15 +1,12 @@
 from django.shortcuts import render
-from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, FileResponse
-from django.core.files.storage import default_storage
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.db.models import Q
-import shutil, zipfile
-from io import StringIO
-from django.conf import settings
+import zipfile
 
 from .models import *
 from .forms import *
+from pprint import pprint
 
 
 # Create your views here.
@@ -389,12 +386,15 @@ def get_last_week_orders_view(request):
 		last_week_orders = Order.objects.filter(created_at__gte=seven_day_before)
 		ans = {'ok': True, 'labels': [
 			str(today - timedelta(days=i)) for i in reversed(range(7))
-		], 'values': [0, 0, 0, 0, 0, 0, 0]}
-
+		], 'values': [0, 0, 0, 0, 0, 0, 0, 0]}
+		print(ans['labels'])
 		for order in last_week_orders:
-			ans['values'][
-				ans['labels'].index(str(order.created_at))
-			] += 1
+			if str(order.created_at) in ans['labels']:
+				ans['values'][
+					ans['labels'].index(str(order.created_at))
+				] += 1
+
+		pprint(ans)
 
 		statuses = {}
 		for order in Order.objects.all():
